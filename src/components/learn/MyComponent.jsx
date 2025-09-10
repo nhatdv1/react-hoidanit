@@ -1,6 +1,8 @@
+import "./style.css"
+
 const MyComponent = () => {
     return (
-        <div>First Component update!</div>
+        <div className="red_color">First Component update!</div>
     );
 }
 
