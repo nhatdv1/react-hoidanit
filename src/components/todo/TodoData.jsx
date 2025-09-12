@@ -1,10 +1,19 @@
 const TodoData = (props) => {
-    console.log("Props received in TodoData:", props);
+    const { todoList, deleteItem } = props;
+
     return (
         <div className='todo-data'>
-            {props.todoList.map((item) => (
-                <div key={item.id}>{item.title}</div>
-            ))}
+            {todoList.map((item) => {
+                return (
+                    (
+                        <div className="todo-item" key={item.id}>
+                            <div key={item.id}>{item.title}</div>
+                            <button onClick={() => deleteItem(item.id)}>Delete</button>
+                        </div>
+
+                    )
+                )
+            })}
         </div>
     );
 }

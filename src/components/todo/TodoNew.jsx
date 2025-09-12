@@ -6,6 +6,7 @@ const TodoNew = (props) => {
 
     const handleClick = () => {
         props.setTodoList(prev => [...prev, { id: Math.floor(Math.random() * 1000), title: valueInput }])
+        setValueInput('')
     }
 
     const handleOnChange = (name) => {
@@ -13,10 +14,10 @@ const TodoNew = (props) => {
     }
 
     return (
-        <div div className='todo-new'>
-            <input type="text" onChange={(event) => handleOnChange(event.target.value)} />
+        <div className='todo-new'>
+            <input type="text" value={valueInput}
+                onChange={(event) => handleOnChange(event.target.value)} />
             <button onClick={handleClick}>Add</button>
-            <div>{valueInput}</div>
         </div>
 
     );
