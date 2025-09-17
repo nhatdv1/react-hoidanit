@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import '../../styles/users.css';
+// import '../../styles/users.css';
+
+import { Space, Table, Tag } from 'antd';
+import type { TableProps } from 'antd';
 
 interface User {
     id: string;
@@ -7,6 +10,7 @@ interface User {
     email: string;
     role: string;
 }
+
 
 const UserTable = () => {
 
@@ -42,14 +46,36 @@ const UserTable = () => {
 
         const dataUser = await resUser.json();
         setUsers(dataUser.data.result);
-        console.log(dataUser);
     }
+
+    const columns: TableProps<User>['columns'] = [
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'name',
+            render: (value, record) => {
+                return (<a>{record.email}</a>);
+            }
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+            key: 'role',
+        },
+    ];
+
 
     return (
         <div>
             <h2>Table Users</h2>
 
-            <table>
+            <Table<User> columns={columns} dataSource={users} />
+            {/* <table>
                 <thead>
                     <tr>
                         <th>Email</th>
@@ -71,7 +97,7 @@ const UserTable = () => {
                     }
 
                 </tbody>
-            </table>
+            </table> */}
         </div>
     );
 }

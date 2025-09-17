@@ -13,6 +13,7 @@ import UserPage from './screens/user.page.js';
 import { UserOutlined, HomeOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
+import './App.scss'
 
 type MenuItem = Required<MenuProps>['items'][number];
 
