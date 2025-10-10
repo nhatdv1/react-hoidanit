@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Input, notification } from 'antd';
+import { IUser } from './users.table';
 
 
 interface IProps {
@@ -7,12 +8,14 @@ interface IProps {
     getData: any;
     isUpdateModalOpen?: boolean;
     setIsUpdateModalOpen: (v: boolean) => void;
+    dataUpdate?: null | IUser;
+    setDataUpdate: (v: null | IUser) => void;
 }
 
 const UpdateUserModal = (props: IProps) => {
-    const { access_token, getData, isUpdateModalOpen, setIsUpdateModalOpen } = props;
+    const { access_token, getData, isUpdateModalOpen, setIsUpdateModalOpen, dataUpdate, setDataUpdate } = props;
+    console.log("=>>>> check dataUpdate", dataUpdate);
 
-    const [_id, setId] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,9 +24,22 @@ const UpdateUserModal = (props: IProps) => {
     const [address, setAddress] = useState('');
     const [role, setRole] = useState('');
 
+    useEffect(() => {
+        //update sau khi gen dom
+        if (dataUpdate) {
+            setName(dataUpdate.name);
+            setEmail(dataUpdate.email);
+            setPassword(dataUpdate.password);
+            setAge(dataUpdate.age);
+            setGender(dataUpdate.gender);
+            setAddress(dataUpdate.address);
+            setRole(dataUpdate.role);
+        }
+    }, [dataUpdate])
+
     const handleOk = async () => {
         const data = {
-            _id, name, email, password, age, gender, address, role
+            name, email, password, age, gender, address, role
         }
 
         const userUpdated = await fetch('http://localhost:8000/api/v1/users', {
@@ -57,6 +73,7 @@ const UpdateUserModal = (props: IProps) => {
 
     const handleCancel = () => {
         setIsUpdateModalOpen(false);
+        setDataUpdate(null);
         setName('');
         setEmail('');
         setPassword('');

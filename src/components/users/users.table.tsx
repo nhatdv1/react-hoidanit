@@ -8,18 +8,23 @@ import UpdateUserModal from './update.user.modal';
 
 
 
-interface User {
+export interface IUser {
     _id: string;
     name: string;
     email: string;
     role: string;
+    password: string;
+    age: string;
+    address: string;
+    gender: string;
 }
 
 
 const UserTable = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-    const [listUsers, setListUsers] = useState<User[]>([]);
+    const [listUsers, setListUsers] = useState<IUser[]>([]);
+    const [dataUpdate, setDataUpdate] = useState<null | IUser>(null);
 
     const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjhjODNiZmMyOTQ3MzI2YzdjOWIyMjZiIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTc5OTY0ODcsImV4cCI6MTg0NDM5NjQ4N30.KOX4G3Q7tWsyaLIyLZXxWweJcsLboQfXFBze94ydmtI";
 
@@ -41,7 +46,7 @@ const UserTable = () => {
         setListUsers(dataUser.data.result);
     }
 
-    const columns: TableProps<User>['columns'] = [
+    const columns: TableProps<IUser>['columns'] = [
         {
             title: 'Email',
             dataIndex: 'email',
@@ -65,7 +70,7 @@ const UserTable = () => {
             render: (value, record) => {
                 return (
                     <div><button onClick={() => {
-                        console.log("=>>>> check record", record);
+                        setDataUpdate(record);
                         setIsUpdateModalOpen(true);
                     }}> Edit</button ></div >
                 );
@@ -86,7 +91,7 @@ const UserTable = () => {
                 </div>
             </div>
 
-            <Table<User>
+            <Table<IUser>
                 columns={columns}
                 dataSource={listUsers}
                 rowKey={record => record._id}
@@ -104,6 +109,8 @@ const UserTable = () => {
                 getData={getData}
                 isUpdateModalOpen={isUpdateModalOpen}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </div >
     );
