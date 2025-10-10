@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { TableProps } from 'antd';
+import type { TableProps, PopconfirmProps } from 'antd';
 
-import { Table, Button } from 'antd';
+import { Table, Button, notification, Popconfirm, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateUserModal from './create.user.modal';
 import UpdateUserModal from './update.user.modal';
@@ -26,12 +26,36 @@ const UserTable = () => {
     const [listUsers, setListUsers] = useState<IUser[]>([]);
     const [dataUpdate, setDataUpdate] = useState<null | IUser>(null);
 
-    const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjhjODNiZmMyOTQ3MzI2YzdjOWIyMjZiIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTc5OTY0ODcsImV4cCI6MTg0NDM5NjQ4N30.KOX4G3Q7tWsyaLIyLZXxWweJcsLboQfXFBze94ydmtI";
+    const access_token = localStorage.getItem("access_token") as string;
 
     useEffect(() => {
-
+        //chế độ dev chạy 2 lần
         getData();
     }, []);
+
+    const confirm = async (id: String) => {
+        const deleteUser = await fetch(
+            `http://localhost:8000/api/v1/users/${id}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`
+                },
+                method: 'DELETE'
+            })
+
+        const dataUser = await deleteUser.json();
+        if (dataUser?.data) {
+            notification.success({
+                message: dataUser?.message || 'Xóa user thành công',
+            });
+            await getData();
+        } else {
+            notification.error({
+                message: JSON.stringify(dataUser?.message) || 'Error',
+            });
+        }
+    };
 
     const getData = async () => {
         const resUser = await fetch('http://localhost:8000/api/v1/users/all', {
@@ -42,7 +66,11 @@ const UserTable = () => {
         })
 
         const dataUser = await resUser.json();
-
+        if (!dataUser.data) {
+            notification.error({
+                message: JSON.stringify(dataUser?.message) || 'Error',
+            });
+        }
         setListUsers(dataUser.data.result);
     }
 
@@ -69,10 +97,23 @@ const UserTable = () => {
             title: 'Actions',
             render: (value, record) => {
                 return (
-                    <div><button onClick={() => {
-                        setDataUpdate(record);
-                        setIsUpdateModalOpen(true);
-                    }}> Edit</button ></div >
+                    <div>
+                        <button onClick={() => {
+                            setDataUpdate(record);
+                            setIsUpdateModalOpen(true);
+                        }}> Edit</button >
+
+                        <Popconfirm
+                            title="Delete the user"
+                            description={`Are you sure to delete user ${record.name} ?`}
+                            onConfirm={() => confirm(record._id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button danger type="primary" style={{ marginLeft: 12 }}>Delete</Button>
+                        </Popconfirm>
+
+                    </div >
                 );
             }
         },

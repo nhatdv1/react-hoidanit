@@ -39,6 +39,7 @@ const UpdateUserModal = (props: IProps) => {
 
     const handleOk = async () => {
         const data = {
+            _id: dataUpdate?._id,
             name, email, password, age, gender, address, role
         }
 
@@ -73,7 +74,7 @@ const UpdateUserModal = (props: IProps) => {
 
     const handleCancel = () => {
         setIsUpdateModalOpen(false);
-        setDataUpdate(null);
+        setDataUpdate
         setName('');
         setEmail('');
         setPassword('');
@@ -108,6 +109,7 @@ const UpdateUserModal = (props: IProps) => {
             <div>
                 <label htmlFor="">Password:</label>
                 <Input placeholder="Password"
+                    disabled
                     value={password}
                     onChange={(event) => setPassword(event.target.value)} />
             </div>

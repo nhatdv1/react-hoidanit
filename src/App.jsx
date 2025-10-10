@@ -2,9 +2,10 @@ import "./components/todo/style.css"
 import TodoData from "./components/todo/TodoData"
 import TodoNew from "./components/todo/TodoNew"
 import Logo from "./assets/react.svg"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const App = () => {
+
   const [todoList, setTodoList] = useState([])
 
   const name = "Eric";

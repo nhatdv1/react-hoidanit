@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
@@ -49,6 +49,29 @@ const Header = () => {
 
 
 const LayoutAdmin = () => {
+
+  const getData = async () => {
+    const res = await fetch('http://localhost:8000/api/v1/auth/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: "admin@gmail.com", password: "123456" })
+    })
+
+    const dataLogin = await res.json();
+    if (dataLogin?.data?.access_token) {
+      localStorage.setItem("access_token", dataLogin?.data?.access_token)
+    }
+  }
+
+  useEffect(() => {
+    if (!localStorage.getItem("access_token")) {
+      getData();
+    }
+
+  }, [])
+
   return (
     <div>
       <Header />
