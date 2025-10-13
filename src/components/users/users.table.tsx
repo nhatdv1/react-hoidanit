@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import type { TableProps, PopconfirmProps } from 'antd';
+import type { TableProps } from 'antd';
 
-import { Table, Button, notification, Popconfirm, message } from 'antd';
+import { Table, Button, notification, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateUserModal from './create.user.modal';
 import UpdateUserModal from './update.user.modal';
-
-
 
 export interface IUser {
     _id: string;
@@ -27,6 +25,13 @@ const UserTable = () => {
     const [dataUpdate, setDataUpdate] = useState<null | IUser>(null);
 
     const access_token = localStorage.getItem("access_token") as string;
+
+    const [meta, setMeta] = useState({
+        current: 1,
+        pageSize: 5,
+        pages: 0,
+        total: 0
+    })
 
     useEffect(() => {
         //chế độ dev chạy 2 lần
@@ -58,12 +63,14 @@ const UserTable = () => {
     };
 
     const getData = async () => {
-        const resUser = await fetch('http://localhost:8000/api/v1/users/all', {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`
-            }
-        })
+        const resUser = await fetch(
+            `http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`
+                }
+            })
 
         const dataUser = await resUser.json();
         if (!dataUser.data) {
@@ -72,6 +79,29 @@ const UserTable = () => {
             });
         }
         setListUsers(dataUser.data.result);
+        setMeta(dataUser.data.meta);
+    }
+
+    const handleOnChange = async (page: number, pageSize: number) => {
+
+
+        const resUser = await fetch(
+            `http://localhost:8000/api/v1/users?current=${page}&pageSize=${pageSize}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`
+                }
+            })
+
+        const dataUser = await resUser.json();
+        if (!dataUser.data) {
+            notification.error({
+                message: JSON.stringify(dataUser?.message) || 'Error',
+            });
+        }
+        setListUsers(dataUser.data.result);
+        setMeta(dataUser.data.meta);
     }
 
     const columns: TableProps<IUser>['columns'] = [
@@ -136,6 +166,14 @@ const UserTable = () => {
                 columns={columns}
                 dataSource={listUsers}
                 rowKey={record => record._id}
+                pagination={{
+                    current: meta.current,
+                    pageSize: meta.pageSize,
+                    total: meta.total,
+                    showTotal: (total, range) => `${range[0]} - ${range[1]} of ${total} items`,
+                    onChange: (page: number, pageSize: number) => handleOnChange(page, pageSize),
+                    showSizeChanger: true
+                }}
             />
 
             <CreateUserModal
