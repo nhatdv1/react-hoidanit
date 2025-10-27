@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Modal, Input, notification } from 'antd';
+import { Modal, Input, notification,  Form, InputNumber, Select } from 'antd';
 
+const { Option } = Select;
 
 interface IProps {
     access_token: string;
@@ -19,6 +20,10 @@ const CreateUserModal = (props: IProps) => {
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
     const [role, setRole] = useState('');
+
+    const onFinish = (values: any) => {
+        console.log('Success:', values);
+      };
 
     const handleOk = async () => {
         const data = {
@@ -74,49 +79,68 @@ const CreateUserModal = (props: IProps) => {
             onCancel={() => handleCancel()}
             maskClosable={false}
         >
-            <div>
-                <label htmlFor="">Name:</label>
-                <Input placeholder="Name"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)} />
-            </div>
+            <Form
+                name="basic"
+                onFinish={onFinish}
+                layout='vertical'
+            >
+                <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: 'Please input your name!' }]}
+                >
+                <Input />
+                </Form.Item>
 
-            <div>
-                <label htmlFor="">Email:</label>
-                <Input placeholder="Email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Password:</label>
-                <Input placeholder="Password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Age:</label>
-                <Input placeholder="Age"
-                    value={age}
-                    onChange={(event) => setAge(event.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Gender:</label>
-                <Input placeholder="Gender"
-                    value={gender}
-                    onChange={(event) => setGender(event.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Address:</label>
-                <Input placeholder="Address"
-                    value={address}
-                    onChange={(event) => setAddress(event.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Role:</label>
-                <Input placeholder="Role"
-                    value={role}
-                    onChange={(event) => setRole(event.target.value)} />
-            </div>
+                <Form.Item
+                label="Email"
+                name="email"
+                rules={[{ required: true, message: 'Please input your email!' }]}
+                >
+                <Input />
+                </Form.Item>
+
+                <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                label="Age"
+                name="age"
+                rules={[{ required: true, message: 'Please input your age!' }]}
+                >
+                <InputNumber style={{width:"100%"}} />
+                </Form.Item>
+
+                <Form.Item
+                label="Address"
+                name="address"
+                rules={[{ required: true, message: 'Please input your address!' }]}
+                >
+                <Input />
+                </Form.Item>
+
+                <Form.Item label="Gender" name="gender" rules={[{ required: true, message: 'Please input your address!' }]}>
+                    <Select placeholder="Select a option and change input text above" allowClear>
+                        <Option value="MALE">male</Option>
+                        <Option value="FEMALE">female</Option>
+                        <Option value="OTHER">other</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item label="Role" name="role" rules={[{ required: true, message: 'Please input your role!' }]}>
+                    <Select placeholder="Select a option and change input text above" allowClear>
+                        <Option value="ADMIN">Admin</Option>
+                        <Option value="USER">User</Option>
+                    </Select>
+                </Form.Item>
+
+            </Form>
+
 
         </Modal>
     );
